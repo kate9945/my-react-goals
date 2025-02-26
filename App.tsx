@@ -1,34 +1,61 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+type Goal = {
+  title: string;
+  description: string;
+};
+
+export default function App() {
+  const [goals, setGoals] = useState<Goal[]>([
+    { title: "Learn Html", description: "Learn basics tags" },
+    { title: "Learn Css", description: "Learn basics CSS" },
+    { title: "Learn JavaScript", description: "Learn basics JS" },
+  ]);
+
+  const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+
+  const addGoal = () => {
+    if (!newTitle.trim() || !newDescription.trim()) return;
+    setGoals([...goals, { title: newTitle, description: newDescription }]);
+    setNewTitle("");
+    setNewDescription("");
+  };
+
+  const deleteGoal = (index: number) => {
+    setGoals(goals.filter((_, i) => i !== index));
+  };
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
+    <div className="container">
+      <h2>Learning Goals</h2>
+      <ul>
+        {goals.map((goal, index) => (
+          <li key={index} className="goal-item">
+            <div>
+              <strong>{goal.title}</strong>: {goal.description}
+            </div>
+            <button className="delete-btn" onClick={() => deleteGoal(index)}>✖</button>
+          </li>
+        ))}
+      </ul>
 
-export default App
+      <div className="form">
+        <input
+          type="text"
+          placeholder="Title"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+        />
+        <button onClick={addGoal}>Add new goal</button>
+      </div>
+    </div>
+  );
+}
